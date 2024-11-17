@@ -94,17 +94,21 @@ def process_measurements(command):
 def handle_device_data():
     if not request.is_json:
         return jsonify({"error": "Request body must be JSON"}), 400
+    else:
+        try:
+            data = request.get_json()
+            external_id = data["externalId"]
+            binary_data = decode_base64(data["data"])
+            uncobs = decode_cobs(binary_data)
+            command = decode_command(uncobs)
+            measurements = process_measurements(command)
+        except:  
+            return jsonify({"message": "JSON received and parsed successfully", "data": data}), 200
 
-    data = request.get_json()
-    external_id = data["externalId"]
-    binary_data = decode_base64(data["data"])
-    uncobs = decode_cobs(binary_data)
-    command = decode_command(uncobs)
-    measurements = process_measurements(command)
-    return jsonify({
-        "status": "success",
-        "measurements": measurements
-    }), 200
+#        return jsonify({
+#            "status": "success",
+#            "measurements": measurements
+#        }), 200
 
 if __name__ == '__main__':
     # Читаем порт из переменной окружения или используем 5000 по умолчанию
