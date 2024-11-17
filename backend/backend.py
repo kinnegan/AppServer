@@ -14,7 +14,5 @@ def process_json():
 
 if __name__ == '__main__':
     # Читаем порт из переменной окружения или используем 5000 по умолчанию
-#    port = int(os.getenv('PORT', 5000))
-#    app.run(host='0.0.0.0', port=port)
- 
-    serve(app, host="0.0.0.0", port=5000, threads=1, debug=True)
+    port = int(os.getenv('PORT', 5000))
+    serve(app, host="0.0.0.0", port=port, threads=1)
