@@ -28,4 +28,4 @@ jobs:
           pip install -r .github/workflows/requirements.txt
 
       - name: test_script
-        run: python /backend/test.py
+        run: python backend/test.py
