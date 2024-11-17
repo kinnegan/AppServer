@@ -1,5 +1,5 @@
 import unittest
-from backend import api
+from backend import app
 
 class TestFlaskAPI(unittest.TestCase):
 
