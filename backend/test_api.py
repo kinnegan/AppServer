@@ -19,7 +19,7 @@ def test_process_valid_request(client):
 
 def test_process_invalid_json(client):
     """Тест обработки некорректного JSON."""
-    response = client.post('/process', data="invalid_json", content_type="application/json")
+    response = client.post('/process', data="{invalid_json}", content_type="application/json")
     assert response.status_code == 400
     assert response.json["error"] == "Request body must be JSON"
 
