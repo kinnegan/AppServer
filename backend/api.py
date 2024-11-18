@@ -11,7 +11,7 @@ def handle_bad_request(e):
     return jsonify({"error": "Request body must be JSON"}), 400
 
 
-@app.route('/process', methods=['POST'])
+@app.route('/co-2', methods=['POST'])
 def handle_device_data():
     try:
         if not request.is_json:
