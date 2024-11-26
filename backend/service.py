@@ -3,6 +3,7 @@ from cobs import cobs
 from datetime import datetime
 import math
 
+
 def decode_base64(data: str) -> bytes:
     return base64.b64decode(data)
 
