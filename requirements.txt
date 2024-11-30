@@ -1,0 +1,6 @@
+flask
+waitress
+pytest
+pymongo
+cobs
+pytest-mock mongomock
