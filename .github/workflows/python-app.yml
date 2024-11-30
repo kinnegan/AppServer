@@ -15,7 +15,7 @@ jobs:
           cache: 'pip'
       
       - name: Install Dependencies
-        run: pip install -r backend/requirements.txt
+        run: pip install -r src/requirements.txt
   test:
     runs-on: ubuntu-latest
     needs: build
@@ -27,11 +27,7 @@ jobs:
       
       - name: Install Dependencies
         run: 
-          pip install -r backend/requirements.txt
+          pip install -r src/requirements.txt
 
-      - name: test_backend
-        run: pytest backend/test.py
-      - name: test_api
-        run: pytest backend/test_api.py
-      - name: test_service
-        run: pytest backend/test_service.py
+      - name: Run tests
+        run: pytest --cov=src/tests/
