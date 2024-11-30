@@ -10,7 +10,7 @@ servers:
 paths:
    /test:
     post:
-      operationId: "co2.read"
+      operationId: "parsers.read"
       tags:
         - "Test"
       summary: "Process test data"

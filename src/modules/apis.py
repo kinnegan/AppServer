@@ -2,9 +2,11 @@ import os
 from flask import render_template
 import connexion
 from werkzeug.exceptions import BadRequest
+import logging
 
+logging.basicConfig(level=logging.DEBUG)
 app = connexion.App(__name__, specification_dir="./")
-app.add_api("swagger.yml")
+app.add_api("swagger.yml", validate_responses=True)
 
 @app.route("/")
 def home():

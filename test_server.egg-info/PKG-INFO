@@ -1,0 +1,9 @@
+Metadata-Version: 2.1
+Name: test_server
+Version: 0.1
+Requires-Dist: flask
+Requires-Dist: pytest
+Requires-Dist: pymongo
+Requires-Dist: cobs
+Requires-Dist: pytest-mock
+Requires-Dist: mongomock
