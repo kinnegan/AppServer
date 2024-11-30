@@ -4,3 +4,4 @@ pytest
 pymongo
 cobs
 pytest-mock
+pytest-cov
