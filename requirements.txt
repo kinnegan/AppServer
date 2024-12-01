@@ -6,3 +6,4 @@ cobs
 pytest-mock
 pytest-cov
 connexion
+pytest-cov
