@@ -5,3 +5,10 @@ pymongo
 cobs
 pytest-mock
 pytest-cov
+connexion
+logging
+math
+base64
+cobs
+datetine
+pymongo
