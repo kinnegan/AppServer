@@ -1,4 +1,5 @@
 pytest
+setuptools
 pymongo
 cobs
 pytest-mock
