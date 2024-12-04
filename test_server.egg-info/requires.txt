@@ -1,6 +1,0 @@
-flask
-pytest
-pymongo
-cobs
-pytest-mock
-mongomock

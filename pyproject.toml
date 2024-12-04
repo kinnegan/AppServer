@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "app_server"
+version = "0.1"
+description = "A simple test API with Flask and Connexion"
+authors = [
+    { name = "Roman Chubugin", email = "kinnegan@gmail.com" }
+]
+license = { text = "MIT" }
+dependencies = [
+    "flask>=2.2",
+    "connexion>=3.0",
+    "gunicorn>=23.0",
+    "uvicorn>=0.32"
+]
+
+[tool.setuptools]
+packages = { find = { where = ["src"] } }
+package-dir = { "" = "src" }

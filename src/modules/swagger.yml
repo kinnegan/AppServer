@@ -10,7 +10,7 @@ servers:
 paths:
    /test:
     post:
-      operationId: "parsers.read"
+      operationId: "modules.parsers.read"
       tags:
         - "Test"
       summary: "Process test data"

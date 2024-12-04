@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import MagicMock
-from modules.parsers import decode_base64, decode_cobs, decode_command, check_device, process_measurements
+from src.modules.parsers import decode_base64, decode_cobs, decode_command, check_device, process_measurements
 
 
 def test_decode_base64():
@@ -24,10 +24,10 @@ def test_decode_command():
         decode_command(b"")
 
 def test_check_device(mocker):
-    mocker.patch("modules.parsers.collection.find_one", return_value=None)
-    mocker.patch("modules.parsers.collection.insert_one")
+    mocker.patch("src.modules.parsers.collection.find_one", return_value=None)
+    mocker.patch("src.modules.parsers.collection.insert_one")
     assert check_device("123", "test", "app_id", "config_id") == "add"
 
-    mocker.patch("modules.parsers.collection.find_one", return_value={"external_id": "123"})
-    mocker.patch("modules.parsers.collection.update_one")
+    mocker.patch("src.modules.parsers.collection.find_one", return_value={"external_id": "123"})
+    mocker.patch("src.modules.parsers.collection.update_one")
     assert check_device("123", "test", "app_id", "config_id") == "update"

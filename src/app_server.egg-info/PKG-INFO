@@ -1,0 +1,10 @@
+Metadata-Version: 2.1
+Name: app_server
+Version: 0.1
+Summary: A simple test API with Flask and Connexion
+Author-email: Roman Chubugin <kinnegan@gmail.com>
+License: MIT
+Requires-Dist: flask>=2.2
+Requires-Dist: connexion>=3.0
+Requires-Dist: gunicorn>=23.0
+Requires-Dist: uvicorn>=0.32
