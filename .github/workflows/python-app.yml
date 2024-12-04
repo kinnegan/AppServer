@@ -18,14 +18,11 @@ jobs:
         run: |
           python -m venv venv
           source venv/bin/activate
-      - name: Activate Virtual Environment
-        run: |
-          source venv/bin/activate
 
       - name: Install Dependencies
         run: |
-          pip install -r requirements.txt
-          pip install -e .
+          pip install --no-cache-dir -r requirements.txt
+          pip install --no-cache-dir -e .
 
   test:
     runs-on: ubuntu-latest
@@ -41,7 +38,7 @@ jobs:
 
       - name: Activate Virtual Environment
         run: |
-          source venv/bin/activate  # Активация виртуального окружения
+          source venv/bin/activate
 
       - name: Run tests
         run: |
