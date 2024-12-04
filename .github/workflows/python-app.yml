@@ -11,28 +11,35 @@ jobs:
 
       - name: Setup Python
         uses: actions/setup-python@v5
-      - name: Clear pip cache
-        run: pip cache purge
-      
+        with:
+          cache: 'pip'
+
+      - name: Create Virtual Environment
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+
       - name: Install Dependencies
         run: |
-          pip install -r requirements.txt --verbose
-          pip install -e . --verbose
+          pip install -r requirements.txt
+          pip install -e .
+
   test:
     runs-on: ubuntu-latest
     needs: build
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
+
       - name: Setup Python
-        uses: actions/setup-python@v4
-      - name: Clear pip cache
-        run: pip cache purge
-      
-      - name: Install Dependencies
+        uses: actions/setup-python@v5
+        with:
+          cache: 'pip'
+
+      - name: Activate Virtual Environment
         run: |
-          pip install -r requirements.txt
-          pip install -e .
+          source venv/bin/activate  # Активация виртуального окружения
 
       - name: Run tests
-        run: pytest
+        run: |
+          pytest
