@@ -46,10 +46,23 @@ jobs:
         with:
           cache: 'pip'
 
+      - name: Cache pip dependencies
+        uses: actions/cache@v3
+        with:
+          path: venv
+          key: ${{ runner.os }}-venv-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-venv-
+
       - name: Activate Virtual Environment
+        run: |
+          source venv/bin/activate
+
+      - name: Install Dependencies
         run: |
           source venv/bin/activate
 
       - name: Run tests
         run: |
+          source venv/bin/activate
           pytest
