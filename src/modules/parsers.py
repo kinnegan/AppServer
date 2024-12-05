@@ -137,3 +137,4 @@ def read(body):
         return jsonify({"error": str(ve)}), 400
     except Exception as e:
         return jsonify({"error": f"Ошибка обработки запроса: {e}"}), 500
+

@@ -37,7 +37,7 @@ paths:
                   example: false
                 data:
                   type: string
-                  example: "dGVzdA=="
+                  example: "A4TxAgMD0i/x/e8tZ+wJywr/////KwKkGDrwLWfpCcUK"
       responses:
         "200":
           description: "Data processed successfully"
