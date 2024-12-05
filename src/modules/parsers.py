@@ -140,7 +140,7 @@ def read(body):
         command = decode_command(uncobs)
         measurements = process_measurements(command)
         x = check_device(external_id,command['devType'], app_id, config_id)
-        return {"message": x}
+        return jsonify({"message": x})
     except ValueError as ve:
         return jsonify({"error": str(ve)}), 400
     except Exception as e:
