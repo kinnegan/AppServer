@@ -11,11 +11,13 @@ load_dotenv()
 
 mongo_uri = os.getenv("MONGO_URI", "mongodb://localhost:27017/")  # Значение по умолчанию, если переменная не найдена
 db_name = os.getenv("MONGO_DB", "co2")
-collection_name = os.getenv("MONGO_COLLECTION", "DeviceInfo")
+#collection_name = os.getenv("MONGO_COLLECTION", "DeviceInfo")
+
 
 client = MongoClient(mongo_uri)
 db = client[db_name]
-collection = db[collection_name]
+collection_device = db[os.getenv("MONGO_DEVICE_COLLECTION", "DeviceInfo")]
+collection_data = db[os.getenv("MONGO_DATA_COLLECTION", "Measurements")]
 
 def decode_base64(data: str) -> bytes:
     try:
@@ -53,24 +55,27 @@ def decode_command(data: bytes) -> dict:
     except Exception as e:
         raise ValueError(f"Ошибка декодирования команды: {e}")
 
-def process_measurements(command: dict) -> list:
+def process_measurements(command: dict, external_id: str) ->dict:
     command_data = command['commandData']
     mea_num = math.ceil((len(command_data) - 1) / 20)
     measurements = []
 
     for i in range(mea_num):
-        measurement = parse_measurement(command_data, i, command['code'])
+        measurement = parse_measurement(command_data, i, command['code'], external_id)
+        collection_data.insert_one(measurement)
         if measurement:
             measurements.append(measurement)
 
     return measurements
 
-def parse_measurement(data: bytes, index: int, code: int) -> dict:
+def parse_measurement(data: bytes, index: int, code: int, external_id: str) -> dict:
     start = 1 + 16 * index
     timestamp = int.from_bytes(data[start:start+4], byteorder='little') * 1000
     date = datetime.fromtimestamp(timestamp / 1000.0)
     measurement = {
         "id": code,
+        "external_id": external_id,
+        "timestamp": date,
         "temperature": parse_value(data[start+5:start+7]),
         "humidity": round(parse_value(data[start+7:start+9]) * 0.01, 1),
         "lux": parse_value(data[start+9:start+11]),
@@ -88,7 +93,7 @@ def parse_value(data: bytes) -> int:
 
 def check_device(external_id: str, dev_type: str, app_id: str, config_id: str):
     try:
-        check = collection.find_one({"external_id":external_id})
+        check = collection_device.find_one({"external_id":external_id})
         if check is None: 
             return add_device(external_id, dev_type, app_id, config_id)
         else: 
@@ -105,7 +110,7 @@ def add_device(external_id: str, dev_type: str, app_id: str, config_id: str):
             "config_id": config_id,
             "added": datetime.now(),
         }
-        collection.insert_one(device)
+        collection_device.insert_one(device)
         add = 'add'
         return add
     except Exception as e:
@@ -115,7 +120,7 @@ def update_device(external_id: str):
     try:
         filter = {"external_id": external_id}
         last_head = { "$set": { 'lastHeard': datetime.now() } }
-        collection.update_one(filter,last_head)
+        collection_device.update_one(filter,last_head)
         upd = 'update'
         return upd
     except Exception as e:
@@ -138,7 +143,7 @@ def read(body):
         binary_data = decode_base64(payload_data)
         uncobs = decode_cobs(binary_data)
         command = decode_command(uncobs)
-        measurements = process_measurements(command)
+        measurements = process_measurements(command, external_id)
         x = check_device(external_id,command['devType'], app_id, config_id)
         return jsonify({"message": x})
     except ValueError as ve:
