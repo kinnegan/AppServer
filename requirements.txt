@@ -7,3 +7,4 @@ pytest-cov
 connexion[flask,swagger-ui]
 gunicorn
 uvicorn
+dotenv
