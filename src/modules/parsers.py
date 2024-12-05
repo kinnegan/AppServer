@@ -4,10 +4,18 @@ from datetime import datetime
 from pymongo import MongoClient
 from flask import jsonify, request
 import math
+from dotenv import load_dotenv
+import os
 
-client = MongoClient("mongodb://192.168.1.5:27017/")
-db = client["co2"]
-collection = db["DeviceInfo"]
+load_dotenv()
+
+mongo_uri = os.getenv("MONGO_URI", "mongodb://localhost:27017/")  # Значение по умолчанию, если переменная не найдена
+db_name = os.getenv("MONGO_DB", "co2")
+collection_name = os.getenv("MONGO_COLLECTION", "DeviceInfo")
+
+client = MongoClient(mongo_uri)
+db = client[db_name]
+collection = db[collection_name]
 
 def decode_base64(data: str) -> bytes:
     try:
