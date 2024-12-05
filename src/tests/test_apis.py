@@ -46,20 +46,12 @@ def test_invalid_api_post_missing_field(client):
         # Отсутствует обязательное поле "data"
     }
     response = client.post("/api/test", json=payload)
-    
-    # Проверяем, что ответ имеет статус 400
     assert response.status_code == 400
-
-    # Проверяем, что ответ в формате JSON
     try:
         response_data = response.json()
     except ValueError:
         pytest.fail(f"Ответ не является валидным JSON: {response.data}")
-
-    # Проверяем, что ответ содержит 'detail', где указано сообщение об ошибке
     assert "detail" in response_data, f"Ключ 'detail' отсутствует в ответе: {response_data}"
-    
-    # Проверяем, что в 'detail' содержится сообщение о недостающем поле
     assert "'data' is a required property" in response_data["detail"], f"Ожидаемое сообщение об ошибке не найдено: {response_data['detail']}"
 
 def test_invalid_api_post_wrong_data_format(client):
@@ -68,15 +60,9 @@ def test_invalid_api_post_wrong_data_format(client):
         "externalId": "test@123.iot.mts.ru",
         "niddConfiguration": "/3gpp-nidd/v1/test/configurations/123",
         "reliableDataService": False,
-        "data": "incorrect-data-format"  # Невалидные данные (проверить, если формат имеет значение)
+        "data": "incorrect-data-format"
     }
     response = client.post("/api/test", json=payload)
-    
-    # Проверяем, что ответ имеет статус 400
     assert response.status_code == 400
-
-    # Вызываем response.json() для получения JSON данных
     response_data = response.json()
-    
-    # Проверяем, что ошибка связана с неправильным форматом
     assert "Ошибка декодирования base64" in response_data["error"] or "Ошибка обработки запроса" in response_data["error"]
