@@ -10,7 +10,7 @@ setup(
         "pymongo",
         "cobs",
         "pytest-mock",
-        "dotenv"
+        "python-dotenv"
         "mongomock"
     ],
 )
