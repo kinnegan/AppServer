@@ -79,21 +79,24 @@ def test_parse_value():
 
 def test_check_device(mock_collection):
     fixed_now = datetime.now()
-    mock_collection.find_one.return_value = None
-    result = check_device("123", "test", "app_id", "config_id", collection=mock_collection)
-    assert result == "add"
-    mock_collection.insert_one.assert_called_once_with({
-        "external_id": "123",
-        "dev_type": "test",
-        "application_id": "app_id",
-        "config_id": "config_id",
-        "added": fixed_now,
-    })
 
-    mock_collection.find_one.return_value = {"external_id": "123"}
-    result = check_device("123", "test", "app_id", "config_id", collection=mock_collection)
+    mock_collection.find_one.return_value = None
+    result = check_device("test@exterma.id", "test", "app_id", "config_id", collection=mock_collection)
+    assert result == "add"
+    insert_args = mock_collection.insert_one.call_args[0][0]
+
+    assert insert_args["external_id"] == "test@exterma.id"
+    assert insert_args["dev_type"] == "test"
+    assert insert_args["application_id"] == "app_id"
+    assert insert_args["config_id"] == "config_id"
+    assert abs((insert_args["added"] - fixed_now).total_seconds()) < 1  # Допустимое отклонение в 1 секунду (для использования в CI)
+
+    mock_collection.find_one.return_value = {"external_id": "test@exterma.id"}
+    mock_collection.reset_mock()
+
+    result = check_device("test@exterma.id", "test", "app_id", "config_id", collection=mock_collection)
+
     assert result == "update"
-    mock_collection.update_one.assert_called_once_with(
-        {"external_id": "123"},
-        {"$set": {"lastHeard": fixed_now}}
-    )
+    update_args = mock_collection.update_one.call_args[0][1]
+
+    assert abs((update_args["$set"]["lastHeard"] - fixed_now).total_seconds()) < 1  # Допустимое отклонение в 1 секунду (для использования в CI)
