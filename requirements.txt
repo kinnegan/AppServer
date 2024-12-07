@@ -8,3 +8,4 @@ connexion[flask,swagger-ui]
 gunicorn
 uvicorn
 python-dotenv
+mongomock

@@ -5,7 +5,6 @@ import os
 
 load_dotenv()
 
-
 # Инициализация подключения к базе данных
 mongo_uri = os.getenv("MONGO_URI", "mongodb://localhost:27017/")  # Значение по умолчанию, если переменная не найдена
 db_name = os.getenv("MONGO_DB", "co2")
@@ -16,17 +15,19 @@ collection_device = db[os.getenv("MONGO_DEVICE_COLLECTION", "DeviceInfo")]
 collection_data = db[os.getenv("MONGO_DATA_COLLECTION", "Measurements")]
 
 # Функция для получения списка устройств
-def get_devices():
-    collection = collection_device
+def get_devices(collection=None):
+    if collection is None:
+        collection = collection_device
     devices = collection.find({}, {"_id": 0, "external_id": 1, "dev_type": 1, "added": 1})
     return list(devices)
 
 # Функция для получения агрегированных данных измерений
-def get_measurements(device_id):
-    collection = collection_data
+def get_measurements(device_id, collection=None):
+    if collection is None:
+        collection = collection_data
 
     # Получаем текущую дату и время в UTC
-    now = datetime.utcnow()
+    now = datetime.now()
     day_ago = now - timedelta(days=1)
 
     # Агрегация данных за последние 24 часа

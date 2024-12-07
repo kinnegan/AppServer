@@ -3,7 +3,6 @@ from cobs import cobs
 from datetime import datetime, timezone
 from pymongo import MongoClient
 from flask import jsonify, request
-import struct
 import math
 from dotenv import load_dotenv
 import os

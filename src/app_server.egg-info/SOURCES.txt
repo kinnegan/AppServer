@@ -12,4 +12,5 @@ src/modules/data_service.py
 src/modules/parsers.py
 src/tests/__init__.py
 src/tests/test_apis.py
+src/tests/test_data_servoce.py
 src/tests/test_parsers.py
