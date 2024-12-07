@@ -43,10 +43,10 @@ def decode_command(data: bytes) -> dict:
             'code': data[0],
             'len': data[1] + (data[2] << 8),
             'devType': data[3] + (data[4] << 8),
-#            'crc': data[3] + (data[4] << 8), #old version
-            'crc': data[5] + (data[6] << 8), #new version
-#            'commandData': data[5:] #old version
-            'commandData': data[7:] #new version
+            # 'crc': data[3] + (data[4] << 8), # old version
+            'crc': data[5] + (data[6] << 8),  # new version
+            # 'commandData': data[5:] # old version
+            'commandData': data[7:]  # new version
         }
 
         dev_type_dict = {
@@ -64,7 +64,7 @@ def decode_command(data: bytes) -> dict:
 def process_measurements(command: dict, external_id: str, collection=None) -> list:
     if collection is None:
         collection = collection_data
-    
+  
     command_data = command['commandData']
     mea_num = math.ceil((len(command_data) - 1) / 20)
     measurements = []
@@ -122,7 +122,7 @@ def parse_value(data: bytes, scale: float = 1.0) -> int:
 def check_device(external_id: str, dev_type: str, app_id: str, config_id: str, collection=None):
     if collection is None:
         collection = collection_device
-  
+
     try:
         check = collection.find_one({"external_id": external_id})
         if check is None:
@@ -135,7 +135,7 @@ def check_device(external_id: str, dev_type: str, app_id: str, config_id: str, c
 
 def add_device(external_id: str, dev_type: str, app_id: str, config_id: str, collection=None):
     if collection is None:
-        collection = collection_device 
+        collection = collection_device
 
     try:
         device = {
@@ -170,7 +170,7 @@ def read(body):
         for field in required_fields:
             if field not in body:
                 raise ValueError(f"Поле '{field}' отсутствует в запросе")
-           
+         
         external_id = body.get("externalId")
         nidd_config = body.get("niddConfiguration")
         reliable_service = body.get("reliableDataService")
@@ -188,4 +188,3 @@ def read(body):
         return jsonify({"error": str(ve)}), 400
     except Exception as e:
         return jsonify({"error": f"Ошибка обработки запроса: {e}"}), 500
-

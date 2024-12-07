@@ -52,7 +52,7 @@ def test_get_measurements(mock_collections):
     """
     Тест для функции get_measurements.
     """
-    now = datetime.now()
+    # now = datetime.now()
     result = get_measurements("device_1", collection=mock_collections["measurements"])
 
     # Проверяем структуру результата

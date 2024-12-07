@@ -1,9 +1,12 @@
-import pytest, os, sys
+import pytest
+import os
+import sys
 from unittest.mock import patch
 import warnings
+from src.modules.apis import app
 print("PYTHONPATH:", os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
-from src.modules.apis import app
+
 
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 warnings.filterwarnings("ignore", category=PendingDeprecationWarning)
