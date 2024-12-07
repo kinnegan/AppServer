@@ -53,7 +53,7 @@ paths:
           description: "Invalid input data"
    /devices:
     get:
-      operationId: "modules.parsers.update_device"
+      operationId: "modules.data_service.get_devices"
       tags:
         - "Devices"
       summary: "Get a list of devices"
@@ -79,7 +79,7 @@ paths:
                       example: "2024-12-05T17:25:08Z"
    /measurements/{device_id}:
     get:
-      operationId: "modules.parsers.add_device"
+      operationId: "modules.data_service.get_measurements"
       tags:
         - "Measurements"
       summary: "Get measurements for a specific device"

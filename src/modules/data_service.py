@@ -25,25 +25,68 @@ def get_devices():
 def get_measurements(device_id):
     collection = collection_data
 
+    # Получаем текущую дату и время в UTC
+    now = datetime.utcnow()
+    day_ago = now - timedelta(days=1)
+
     # Агрегация данных за последние 24 часа
     pipeline = [
         {
-            "$match": { "external_id": device_id, "timestamp": { "$gte": datetime.today() - timedelta(days=1) } }
+            "$match": {
+                "external_id": device_id,
+                "datetime": {"$gte": day_ago}  # Сравниваем с UTC-объектом
+            }
         },
         {
             "$group": {
                 "_id": {
-                    "year": { "$year": "$timestamp" },
-                    "month": { "$month": "$timestamp" },
-                    "day": { "$dayOfMonth": "$timestamp" },
-                    "hour": { "$hour": "$timestamp" }
+                    "year": {"$year": "$datetime"},
+                    "month": {"$month": "$datetime"},
+                    "day": {"$dayOfMonth": "$datetime"},
+                    "hour": {"$hour": "$datetime"}
                 },
-                "avg_temperature": { "$avg": { "$toDouble": "$temperature" } },
-                "avg_humidity": { "$avg": "$humidity" },
-                "avg_co2": { "$avg": "$co2" }
+                "avg_temperature": {"$avg": "$temperature"},
+                "avg_humidity": {"$avg": "$humidity"},
+                "avg_co2": {"$avg": "$co2"}
             }
         },
-        { "$sort": { "_id": 1 } }
+        {"$sort": {"_id": 1}}
     ]
-    result = collection.aggregate(pipeline)
-    return list(result)
+
+    # Выполняем агрегацию
+    result = list(collection.aggregate(pipeline))
+
+    # Формируем данные в соответствии со спецификацией
+    temperature_data = []
+    humidity_data = []
+    co2_data = []
+
+    for item in result:
+        # Формируем timestamp
+        timestamp = datetime(
+            year=item["_id"]["year"],
+            month=item["_id"]["month"],
+            day=item["_id"]["day"],
+            hour=item["_id"]["hour"]
+        ).isoformat() + "Z"  # Преобразуем в ISO 8601
+
+        # Добавляем данные в соответствующие массивы
+        temperature_data.append({
+            "timestamp": timestamp,
+            "avg_temperature": item.get("avg_temperature")
+        })
+        humidity_data.append({
+            "timestamp": timestamp,
+            "avg_humidity": item.get("avg_humidity")
+        })
+        co2_data.append({
+            "timestamp": timestamp,
+            "avg_co2": item.get("avg_co2")
+        })
+
+    # Возвращаем данные в формате, который соответствует спецификации
+    return {
+        "temperature": temperature_data,
+        "humidity": humidity_data,
+        "co2": co2_data
+    }

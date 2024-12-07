@@ -93,7 +93,7 @@ def parse_measurement(data: bytes, index: int, code: int, external_id: str) -> d
     voltage = (data[15 + 16 * index] + (data[16 + 16 * index] << 8)) * 0.001
     measurement = {
         "id": code,
-        "i": index,
+        "external_id": external_id,
         "reason": reason,
         "timestamp": timestamp,
         "datetime": date,
