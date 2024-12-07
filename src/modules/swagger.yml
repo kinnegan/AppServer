@@ -51,3 +51,86 @@ paths:
                     example: "Data received and processed successfully."
         "400":
           description: "Invalid input data"
+   /devices:
+    get:
+      operationId: "modules.parsers.update_device"
+      tags:
+        - "Devices"
+      summary: "Get a list of devices"
+      responses:
+        "200":
+          description: "List of devices"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    external_id:
+                      type: string
+                      example: "device@example.com"
+                    dev_type:
+                      type: string
+                      example: "Device Type"
+                    added:
+                      type: string
+                      format: date-time
+                      example: "2024-12-05T17:25:08Z"
+   /measurements/{device_id}:
+    get:
+      operationId: "modules.parsers.add_device"
+      tags:
+        - "Measurements"
+      summary: "Get measurements for a specific device"
+      parameters:
+        - name: device_id
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "device_id"
+      responses:
+        "200":
+          description: "Aggregated measurements data"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  temperature:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        timestamp:
+                          type: string
+                          format: date-time
+                          example: "2024-12-05T12:00:00Z"
+                        avg_temperature:
+                          type: number
+                          example: 22.5
+                  humidity:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        timestamp:
+                          type: string
+                          format: date-time
+                          example: "2024-12-05T12:00:00Z"
+                        avg_humidity:
+                          type: number
+                          example: 45.3
+                  co2:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        timestamp:
+                          type: string
+                          format: date-time
+                          example: "2024-12-05T12:00:00Z"
+                        avg_co2:
+                          type: number
+                          example: 400
