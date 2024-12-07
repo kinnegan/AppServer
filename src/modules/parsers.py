@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 from pymongo import MongoClient
 from flask import jsonify, request
 import struct
+import math
 from dotenv import load_dotenv
 import os
 
@@ -62,7 +63,7 @@ def process_measurements(command: dict, external_id: str, collection=None) -> li
         collection = collection_data
     
     command_data = command['commandData']
-    mea_num = round((len(command_data) - 1) / 20)
+    mea_num = math.ceil((len(command_data) - 1) / 20)
     measurements = []
 
     for i in range(mea_num):
@@ -92,6 +93,7 @@ def parse_measurement(data: bytes, index: int, code: int, external_id: str) -> d
     voltage = (data[15 + 16 * index] + (data[16 + 16 * index] << 8)) * 0.001
     measurement = {
         "id": code,
+        "i": index,
         "reason": reason,
         "timestamp": timestamp,
         "datetime": date,
