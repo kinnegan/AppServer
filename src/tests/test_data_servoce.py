@@ -24,7 +24,7 @@ def mock_collections():
     ])
 
     # Наполняем коллекцию измерений данными
-    now = datetime.utcnow()
+    now = datetime.now()
     measurements_collection.insert_many([
         {"external_id": "device_1", "datetime": now - timedelta(hours=1), "temperature": 22.5, "humidity": 55, "co2": 400},
         {"external_id": "device_1", "datetime": now - timedelta(hours=2), "temperature": 21.0, "humidity": 60, "co2": 420},

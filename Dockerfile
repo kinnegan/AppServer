@@ -1,22 +1,29 @@
-# Используем официальный Python образ
+# Используем официальный Python-образ
 FROM python:3.11-slim
 
-# Установим рабочую директорию
+# Устанавливаем рабочую директорию
 WORKDIR /app
 
-# Копируем файлы проекта в контейнер
-COPY /src/modules/. /app/
-COPY requirements.txt /app/
-COPY setup.py /app/
-COPY pyproject.toml /app/
+# Устанавливаем зависимости системы
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
 
-# Устанавливаем зависимости
+# Копируем файл зависимостей
+COPY requirements.txt .
+
+# Устанавливаем Python-зависимости
 RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install gunicorn uvicorn
 
-# Открываем порт для приложения
+# Копируем исходный код приложения
+COPY . .
+
+ENV PYTHONPATH=/app/src:$PYTHONPATH
+
+# Открываем порт приложения
 EXPOSE 8000
 
-# Команда для запуска приложения с gunicorn и uvicorn worker
-CMD ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "apis:app", "--bind", "0.0.0.0:8000"]
+# Команда для запуска приложения
+CMD ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "modules.apis:app", "--bind", "0.0.0.0:8000"]
