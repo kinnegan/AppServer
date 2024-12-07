@@ -7,6 +7,7 @@ from src.modules.parsers import (
 from cobs import cobs
 from datetime import datetime
 
+
 @pytest.fixture
 def mock_collection():
     """мок-объект коллекции MongoDB."""
@@ -18,10 +19,12 @@ def test_decode_base64_valid():
     decoded = decode_base64(data)
     assert decoded == b"Hello world"
 
+
 def test_decode_base64_invalid():
     data = "invalid_base64"
     with pytest.raises(ValueError, match="Ошибка декодирования base64"):
         decode_base64(data)
+
 
 def test_decode_cobs_valid():
     data = b"\x01\x02\x03"
@@ -29,10 +32,12 @@ def test_decode_cobs_valid():
     decoded = decode_cobs(encoded)
     assert decoded == data
 
+
 def test_decode_cobs_invalid():
     data = b"\x00\x00"
     with pytest.raises(ValueError, match="Ошибка COBS-декодирования"):
         decode_cobs(data)
+
 
 def test_decode_command_valid():
     data = b"\x01\x02\x00\x01\x00\xff\xfftestdata"  # len = 2 (0x02 0x00)
@@ -43,10 +48,12 @@ def test_decode_command_valid():
     assert command["crc"] == 65535
     assert command["commandData"] == b"testdata"
 
+
 def test_decode_command_invalid():
     data = b""
     with pytest.raises(ValueError, match="Нулевая длина команды"):
         decode_command(data)
+
 
 def test_process_measurements(mock_collection):
     command = {
@@ -58,6 +65,7 @@ def test_process_measurements(mock_collection):
     assert len(measurements) == 2
 
     assert mock_collection.insert_one.call_count == 2
+
 
 def test_parse_measurement_valid():
     data = b"\x00" + b"\x10\x00\x00\x00" + b"\x01" * 16
@@ -72,10 +80,12 @@ def test_parse_measurement_valid():
     assert measurement["date"] == '01-01-1970'
     assert measurement["time"] == '00:00:16'
 
+
 def test_parse_value():
     data = b"\x01\x02"
     value = parse_value(data)
     assert value == 258
+
 
 def test_check_device(mock_collection):
     fixed_now = datetime.now()

@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from mongomock import MongoClient as MockMongoClient
 from src.modules.data_service import get_devices, get_measurements  # Замените `module` на имя вашего модуля
 
+
 @pytest.fixture
 def mock_collections():
     """
