@@ -6,7 +6,7 @@ import os
 load_dotenv()
 
 # Инициализация подключения к базе данных
-mongo_uri = os.getenv("MONGO_URI", "mongodb://localhost:27017/")  # Значение по умолчанию, если переменная не найдена
+mongo_uri = os.getenv("MONGO_URI", "mongodb://localhost:27017/")
 db_name = os.getenv("MONGO_DB", "co2")
 
 client = MongoClient(mongo_uri)
