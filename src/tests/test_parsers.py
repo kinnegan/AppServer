@@ -7,6 +7,11 @@ from src.modules.parsers import (
 from cobs import cobs
 from datetime import datetime
 
+@pytest.fixture
+def mock_collection():
+    """мок-объект коллекции MongoDB."""
+    return MagicMock()
+
 
 def test_decode_base64_valid():
     data = "SGVsbG8gd29ybGQ="
@@ -43,13 +48,16 @@ def test_decode_command_invalid():
     with pytest.raises(ValueError, match="Нулевая длина команды"):
         decode_command(data)
 
-def test_process_measurements():
+def test_process_measurements(mock_collection):
     command = {
         "commandData": b"\x00" + b"\x01" * 20 + b"\x02" * 20,
         "code": 1,
     }
-    measurements = process_measurements(command,"test@exterma.id")
+    measurements = process_measurements(command, "test@exterma.id", collection=mock_collection)
+
     assert len(measurements) == 2
+
+    assert mock_collection.insert_one.call_count == 2
 
 def test_parse_measurement_valid():
     data = b"\x00" + b"\x10\x00\x00\x00" + b"\x01" * 16
@@ -69,11 +77,23 @@ def test_parse_value():
     value = parse_value(data)
     assert value == 258
 
-def test_check_device(mocker):
-    mocker.patch("src.modules.parsers.collection_device.find_one", return_value=None)
-    mocker.patch("src.modules.parsers.collection_device.insert_one")
-    assert check_device("123", "test", "app_id", "config_id") == "add"
+def test_check_device(mock_collection):
+    fixed_now = datetime.now()
+    mock_collection.find_one.return_value = None
+    result = check_device("123", "test", "app_id", "config_id", collection=mock_collection)
+    assert result == "add"
+    mock_collection.insert_one.assert_called_once_with({
+        "external_id": "123",
+        "dev_type": "test",
+        "application_id": "app_id",
+        "config_id": "config_id",
+        "added": fixed_now,
+    })
 
-    mocker.patch("src.modules.parsers.collection_device.find_one", return_value={"external_id": "123"})
-    mocker.patch("src.modules.parsers.collection_device.update_one")
-    assert check_device("123", "test", "app_id", "config_id") == "update"
+    mock_collection.find_one.return_value = {"external_id": "123"}
+    result = check_device("123", "test", "app_id", "config_id", collection=mock_collection)
+    assert result == "update"
+    mock_collection.update_one.assert_called_once_with(
+        {"external_id": "123"},
+        {"$set": {"lastHeard": fixed_now}}
+    )

@@ -57,14 +57,17 @@ def decode_command(data: bytes) -> dict:
     except Exception as e:
         raise ValueError(f"Ошибка декодирования команды: {e}")
 
-def process_measurements(command: dict, external_id: str) ->dict:
+def process_measurements(command: dict, external_id: str, collection=None) -> list:
+    if collection is None:
+        collection = collection_data
+    
     command_data = command['commandData']
     mea_num = round((len(command_data) - 1) / 20)
     measurements = []
 
     for i in range(mea_num):
         measurement = parse_measurement(command_data, i, command['code'], external_id)
-        collection_data.insert_one(measurement)
+        collection.insert_one(measurement)
         if measurement:
             measurements.append(measurement)
 
@@ -108,17 +111,23 @@ def parse_value(data: bytes, scale: float = 1.0) -> int:
     value = int.from_bytes(data, byteorder='big')
     return value * scale
 
-def check_device(external_id: str, dev_type: str, app_id: str, config_id: str):
+def check_device(external_id: str, dev_type: str, app_id: str, config_id: str, collection=None):
+    if collection is None:
+        collection = collection_device
+    
     try:
-        check = collection_device.find_one({"external_id":external_id})
-        if check is None: 
-            return add_device(external_id, dev_type, app_id, config_id)
-        else: 
-            return update_device(external_id)
+        check = collection.find_one({"external_id": external_id})
+        if check is None:
+            return add_device(external_id, dev_type, app_id, config_id, collection=collection)
+        else:
+            return update_device(external_id, collection=collection)
     except Exception as e:
         raise RuntimeError(f"Ошибка проверки устройства: {e}")
 
-def add_device(external_id: str, dev_type: str, app_id: str, config_id: str):
+def add_device(external_id: str, dev_type: str, app_id: str, config_id: str, collection=None):
+    if collection is None:
+        collection = collection_device 
+
     try:
         device = {
             "external_id": external_id,
@@ -127,19 +136,20 @@ def add_device(external_id: str, dev_type: str, app_id: str, config_id: str):
             "config_id": config_id,
             "added": datetime.now(),
         }
-        collection_device.insert_one(device)
-        add = 'add'
-        return add
+        collection.insert_one(device)
+        return "add"
     except Exception as e:
         raise RuntimeError(f"Ошибка добавления устройства: {e}")
 
-def update_device(external_id: str):
+def update_device(external_id: str, collection=None):
+    if collection is None:
+        collection = collection_device
+
     try:
         filter = {"external_id": external_id}
-        last_head = { "$set": { 'lastHeard': datetime.now() } }
-        collection_device.update_one(filter,last_head)
-        upd = 'update'
-        return upd
+        last_head = {"$set": {"lastHeard": datetime.now()}}
+        collection.update_one(filter, last_head)
+        return "update"
     except Exception as e:
         raise RuntimeError(f"Ошибка обновления устройства: {e}")
 
