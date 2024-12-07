@@ -43,36 +43,31 @@ def test_decode_command_invalid():
     with pytest.raises(ValueError, match="Нулевая длина команды"):
         decode_command(data)
 
-# def test_process_measurements():
-#     command = {
-#         "commandData": b"\x00" + b"\x01" * 20 + b"\x02" * 20,
-#         "code": 1,
-#     }
-#     measurements = process_measurements(command)
-#     assert len(measurements) == 2
+def test_process_measurements():
+    command = {
+        "commandData": b"\x00" + b"\x01" * 20 + b"\x02" * 20,
+        "code": 1,
+    }
+    measurements = process_measurements(command,"test@exterma.id")
+    assert len(measurements) == 2
 
-# def test_parse_measurement_valid():
-#     data = b"\x00" + b"\x10\x00\x00\x00" + b"\x01" * 16
-#     measurement = parse_measurement(data, 0, 1)
-#     assert measurement["id"] == 1
-#     assert measurement["temperature"] == 257
-#     assert measurement["humidity"] == 2.6
-#     assert measurement["lux"] == 257
-#     assert measurement["noise"] == 257
-#     assert measurement["co2"] == 257
-#     assert measurement["voltage"] == 0.26
-#     assert measurement["date"] == datetime.fromtimestamp(16).strftime("%d.%m.%Y")
-#     assert measurement["time"] == datetime.fromtimestamp(16).strftime("%H:%M:%S")
-
-# def test_parse_measurement_invalid():
-#     data = b"\x00" + b"\x10\x00\x00\x00" + b"\xff\xff" * 8
-#     measurement = parse_measurement(data, 0, 1)
-#     assert measurement is None
+def test_parse_measurement_valid():
+    data = b"\x00" + b"\x10\x00\x00\x00" + b"\x01" * 16
+    measurement = parse_measurement(data, 0, 1, "test@exterma.id")
+    assert measurement["id"] == 1
+    assert measurement["temperature"] == 2.57
+    assert measurement["humidity"] == 2.57
+    assert measurement["lux"] == 257
+    assert measurement["noise"] == 257
+    assert measurement["co2"] == 257
+    assert measurement["voltage"] == 0.26
+    assert measurement["date"] == '01-01-1970'
+    assert measurement["time"] == '00:00:16'
 
 def test_parse_value():
     data = b"\x01\x02"
     value = parse_value(data)
-    assert value == 513
+    assert value == 258
 
 def test_check_device(mocker):
     mocker.patch("src.modules.parsers.collection_device.find_one", return_value=None)

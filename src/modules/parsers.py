@@ -1,9 +1,9 @@
 import base64
 from cobs import cobs
-from datetime import datetime
+from datetime import datetime, timezone
 from pymongo import MongoClient
 from flask import jsonify, request
-import math
+import struct
 from dotenv import load_dotenv
 import os
 
@@ -40,8 +40,10 @@ def decode_command(data: bytes) -> dict:
             'code': data[0],
             'len': data[1] + (data[2] << 8),
             'devType': data[3] + (data[4] << 8),
-            'crc': data[5] + (data[6] << 8),
-            'commandData': data[7:]
+#            'crc': data[3] + (data[4] << 8), #old version
+            'crc': data[5] + (data[6] << 8), #new version
+#            'commandData': data[5:] #old version
+            'commandData': data[7:] #new version
         }
 
         dev_type_dict = {
@@ -57,7 +59,7 @@ def decode_command(data: bytes) -> dict:
 
 def process_measurements(command: dict, external_id: str) ->dict:
     command_data = command['commandData']
-    mea_num = math.ceil((len(command_data) - 1) / 20)
+    mea_num = round((len(command_data) - 1) / 20)
     measurements = []
 
     for i in range(mea_num):
@@ -70,26 +72,41 @@ def process_measurements(command: dict, external_id: str) ->dict:
 
 def parse_measurement(data: bytes, index: int, code: int, external_id: str) -> dict:
     start = 1 + 16 * index
-    timestamp = int.from_bytes(data[start:start+4], byteorder='little') * 1000
-    date = datetime.fromtimestamp(timestamp / 1000.0)
+    reason = (data[0])
+    if len(data) < start + 16:
+        raise ValueError(f": {len(data)},  {start + 16} ")
+
+    timestamp = (data[1 + 16 * index] + (data[2 + 16 * index] << 8) + (data[3 + 16 * index] << 16) + (data[4 + 16 * index] << 24))
+    date = datetime.fromtimestamp(timestamp,timezone.utc)
+    temperature = (data[5 + 16 * index] + (data[6 + 16 * index] << 8)) * 0.01
+    humidity = (data[7 + 16 * index] + (data[8 + 16 * index] << 8)) * 0.01
+#    humidity = (data[7 + 20 * index] + (data[8 + 20 * index] + (data[9 + 20 * index] + (data[10 + 20 * index]<< 24)) * 0.01 #old version
+#    pressure = (data[11 + 20 * index] + (data[12 + 20 * index] + (data[13 + 20 * index] + (data[14 + 20 * index]<< 24)) / 100 #old version
+#    rawAir = (data[15 + 20 * index] + (data[16 + 20 * index] + (data[17 + 20 * index] + (data[18 + 20 * index]<< 24)) #old version
+    lux = (data[9 + 16 * index] + (data[10 + 16 * index] << 8))
+    noise = (data[11 + 16 * index] + (data[12 + 16 * index] << 8))
+    co2 = (data[13 + 16 * index] + (data[14 + 16 * index] << 8))
+    voltage = (data[15 + 16 * index] + (data[16 + 16 * index] << 8)) * 0.001
     measurement = {
         "id": code,
-        "external_id": external_id,
-        "timestamp": date,
-        "temperature": parse_value(data[start+5:start+7]),
-        "humidity": round(parse_value(data[start+7:start+9]) * 0.01, 1),
-        "lux": parse_value(data[start+9:start+11]),
-        "noise": parse_value(data[start+11:start+13]),
-        "co2": parse_value(data[start+13:start+15]),
-        "voltage": round(parse_value(data[start+15:start+17]) * 0.001, 2),
-        "date": date.strftime('%d.%m.%Y'),
+        "reason": reason,
+        "timestamp": timestamp,
+        "datetime": date,
+        "temperature": round(temperature,2) if temperature != 65535 else None,
+        "humidity": humidity if humidity != 65535 else None,
+        "lux": lux if lux != 65535 else None,
+        "noise": noise if noise != 65535 else None,
+        "co2": co2 if co2 != 65535 else None,
+        "voltage": round(voltage,2),
+        "date": date.strftime('%d-%m-%Y'),
         "time": date.strftime('%H:%M:%S')
     }
 
-    return measurement if measurement["temperature"] != 65535 else None
+    return measurement
 
-def parse_value(data: bytes) -> int:
-    return int.from_bytes(data, byteorder='little')
+def parse_value(data: bytes, scale: float = 1.0) -> int:
+    value = int.from_bytes(data, byteorder='big')
+    return value * scale
 
 def check_device(external_id: str, dev_type: str, app_id: str, config_id: str):
     try:
