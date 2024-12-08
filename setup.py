@@ -10,7 +10,8 @@ setup(
         "pymongo",
         "cobs",
         "pytest-mock",
-        "python-dotenv"
-        "mongomock"
+        "python-dotenv",
+        "mongomock",
+        "flask_cors"
     ],
 )

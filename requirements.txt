@@ -9,3 +9,4 @@ gunicorn
 uvicorn
 python-dotenv
 mongomock
+flask_cors

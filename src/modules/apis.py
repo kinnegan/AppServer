@@ -1,5 +1,6 @@
 import os
 from flask import render_template, request
+from flask_cors import CORS
 import connexion
 import logging
 
@@ -10,12 +11,13 @@ logger = logging.getLogger(__name__)
 
 app = connexion.FlaskApp(__name__, specification_dir='./')
 app.add_api('swagger.yml', validate_responses=True)
+CORS(app.app)
 
 
 @app.app.before_request
 def log_request():
     logger.info(f"Request: {request.method} {request.url}")
-    if request.json:
+    if request.method == 'POST' and request.json:
         logger.info(f"Payload: {request.json}")
 
 
