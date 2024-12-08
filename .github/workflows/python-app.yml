@@ -167,5 +167,5 @@ jobs:
 
       - name: Scan dependencies with Trivy
         run: |
-          trivy fs --severity HIGH,CRITICAL src/modules/
+          trivy fs --severity HIGH,CRITICAL --exclude-dir venv .
         continue-on-error: true
