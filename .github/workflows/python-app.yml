@@ -150,9 +150,12 @@ jobs:
 
       - name: Install Trivy
         run: |
-          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh
-          echo "$HOME/bin" >> $GITHUB_ENV
-#          export PATH=$HOME/bin:$PATH
+          sudo apt-get update
+          sudo apt-get install -y wget
+          wget https://github.com/aquasecurity/trivy/releases/download/v0.35.0/trivy_0.35.0_Linux-64bit.deb
+          sudo dpkg -i trivy_0.35.0_Linux-64bit.deb
+          rm trivy_0.35.0_Linux-64bit.deb
+
       - name: Print PATH
         run: echo $PATH
 
