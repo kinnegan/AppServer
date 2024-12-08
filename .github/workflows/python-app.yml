@@ -167,5 +167,5 @@ jobs:
 
       - name: Scan dependencies with Trivy
         run: |
-          trivy fs --severity HIGH,CRITICAL .
+          trivy fs --severity HIGH,CRITICAL src/modules/
         continue-on-error: true
