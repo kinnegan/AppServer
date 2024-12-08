@@ -63,8 +63,7 @@ def decode_command(data: bytes) -> dict:
 
 def process_measurements(command: dict, external_id: str, collection=None) -> list:
     if collection is None:
-        collection = collection_data
-  
+        collection = collection_data       
     command_data = command['commandData']
     mea_num = math.ceil((len(command_data) - 1) / 20)
     measurements = []
@@ -169,8 +168,7 @@ def read(body):
         required_fields = ["externalId", "niddConfiguration", "data"]
         for field in required_fields:
             if field not in body:
-                raise ValueError(f"Поле '{field}' отсутствует в запросе")
-         
+                raise ValueError(f"Поле '{field}' отсутствует в запросе")       
         external_id = body.get("externalId")
         nidd_config = body.get("niddConfiguration")
         reliable_service = body.get("reliableDataService")
