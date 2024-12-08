@@ -152,7 +152,12 @@ jobs:
         run: |
           curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh
           echo "$HOME/bin" >> $GITHUB_ENV
-          export PATH=$HOME/bin:$PATH
+#          export PATH=$HOME/bin:$PATH
+      - name: Print PATH
+        run: echo $PATH
+
+      - name: Check if Trivy is installed
+        run: which trivy
 
       - name: Check Trivy version
         run: trivy --version
