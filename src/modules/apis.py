@@ -1,9 +1,22 @@
 import os
-from flask import render_template
+from flask import render_template, request
 import connexion
+import logging
+
+# logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 
 app = connexion.FlaskApp(__name__, specification_dir='./')
 app.add_api('swagger.yml', validate_responses=True)
+
+
+@app.app.before_request
+def log_request():
+    logger.info(f"Request: {request.method} {request.url}")
+    if request.json:
+        logger.info(f"Payload: {request.json}")
 
 
 def print_routes():
