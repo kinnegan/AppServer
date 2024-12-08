@@ -103,3 +103,47 @@ jobs:
         run: |
           flake8 .
         continue-on-error: true
+
+  SAST:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          cache: 'pip'
+      - name: Cache pip dependencies
+        uses: actions/cache@v3
+        with:
+          path: venv
+          key: ${{ runner.os }}-venv-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-venv-
+  
+      - name: Activate Virtual Environment
+        run: |
+          source venv/bin/activate
+
+      - name: Install Dependencies
+        run: |
+          source venv/bin/activate
+      - name: Install flake8
+        run: |
+          pip install bandit semgrep
+          - name: Run Bandit
+          run: |
+            bandit -r src/ 
+      - name: Run Semgrep
+        run: |
+          semgrep --config p/ci
+
+      - name: Install Trivy
+        run: |
+          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh
+
+      - name: Scan dependencies with Trivy
+        run: |
+          trivy fs --scanners vuln .
