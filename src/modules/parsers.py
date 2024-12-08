@@ -171,7 +171,7 @@ def read(body):
                 raise ValueError(f"Поле '{field}' отсутствует в запросе")       
         external_id = body.get("externalId")
         nidd_config = body.get("niddConfiguration")
-        reliable_service = body.get("reliableDataService")
+        # reliable_service = body.get("reliableDataService")
         parse_nidd = nidd_config.split("/")
         app_id = parse_nidd[3]
         config_id = parse_nidd[5]
@@ -179,7 +179,7 @@ def read(body):
         binary_data = decode_base64(payload_data)
         uncobs = decode_cobs(binary_data)
         command = decode_command(uncobs)
-        measurements = process_measurements(command, external_id)
+        process_measurements(command, external_id)
         x = check_device(external_id, command['devType'], app_id, config_id)
         return jsonify({"message": x})
     except ValueError as ve:
