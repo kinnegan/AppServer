@@ -81,6 +81,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           cache: 'pip'
+          
       - name: Cache pip dependencies
         uses: actions/cache@v3
         with:
@@ -96,9 +97,11 @@ jobs:
       - name: Install Dependencies
         run: |
           source venv/bin/activate
+
       - name: Install flake8
         run: |
           pip install flake8
+
       - name: Run flake8
         run: |
           flake8 .
@@ -130,20 +133,25 @@ jobs:
       - name: Install Dependencies
         run: |
           source venv/bin/activate
+
       - name: Install bandit semgrep
         run: |
           pip install bandit semgrep
+
       - name: Run Bandit
         run: |
           bandit -r src/modules/
         continue-on-error: true
+
       - name: Run Semgrep
         run: |
           semgrep --config p/ci
         continue-on-error: true
+
       - name: Install Trivy
         run: |
           curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh
+          echo "$HOME/bin" >> $GITHUB_PATH
 
       - name: Scan dependencies with Trivy
         run: |
