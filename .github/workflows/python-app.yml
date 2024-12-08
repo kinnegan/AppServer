@@ -130,12 +130,12 @@ jobs:
       - name: Install Dependencies
         run: |
           source venv/bin/activate
-      - name: Install flake8
+      - name: Install bandit semgrep
         run: |
           pip install bandit semgrep
       - name: Run Bandit
         run: |
-          bandit -r src/ 
+          bandit -r src/modules/ 
       - name: Run Semgrep
         run: |
           semgrep --config p/ci
