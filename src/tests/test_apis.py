@@ -22,7 +22,7 @@ def test_home(client):
     """Проверка главной страницы."""
     response = client.get("/")
     assert response.status_code == 200
-    assert "Hello, World!" in response.text
+    assert "I'm alive!" in response.text
 
 
 def test_route(client):
