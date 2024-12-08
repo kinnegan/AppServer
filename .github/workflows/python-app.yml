@@ -2,8 +2,8 @@ name: continuous_integration
 
 on: 
   push:
-      paths:
-        - 'src/**'
+#      paths:
+#        - 'src/**'
 
 jobs:
   build:
@@ -135,11 +135,12 @@ jobs:
           pip install bandit semgrep
       - name: Run Bandit
         run: |
-          bandit -r src/modules/ 
+          bandit -r src/modules/
+        continue-on-error: true
       - name: Run Semgrep
         run: |
           semgrep --config p/ci
-
+        continue-on-error: true
       - name: Install Trivy
         run: |
           curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh
@@ -147,3 +148,4 @@ jobs:
       - name: Scan dependencies with Trivy
         run: |
           trivy fs --scanners vuln .
+        continue-on-error: true

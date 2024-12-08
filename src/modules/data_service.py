@@ -37,7 +37,7 @@ def get_measurements(device_id, collection=None):
         {
             "$match": {
                 "external_id": device_id,
-                "datetime": {"$gte": day_ago}  # Сравниваем с UTC-объектом
+                "datetime": {"$gte": day_ago}
             }
         },
         {
