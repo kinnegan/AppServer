@@ -167,5 +167,5 @@ jobs:
 
       - name: Scan dependencies with Trivy
         run: |
-          trivy fs --scanners vuln .
+          trivy fs --severity HIGH,CRITICAL .
         continue-on-error: true
