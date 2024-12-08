@@ -1,5 +1,5 @@
 from pymongo import MongoClient
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from dotenv import load_dotenv
 import os
 
@@ -29,8 +29,8 @@ def get_measurements(device_id, collection=None):
         collection = collection_data
 
     # Получаем текущую дату и время в UTC
-    now = datetime.now()
-    day_ago = now - timedelta(days=1)
+    now = datetime.now(timezone.utc)
+    day_ago = now - timedelta(days=7)
 
     # Агрегация данных за последние 24 часа
     pipeline = [
@@ -58,6 +58,7 @@ def get_measurements(device_id, collection=None):
 
     # Выполняем агрегацию
     result = list(collection.aggregate(pipeline))
+    print(result)  # Для отладки
 
     # Формируем данные в соответствии со спецификацией
     temperature_data = []
@@ -70,7 +71,8 @@ def get_measurements(device_id, collection=None):
             year=item["_id"]["year"],
             month=item["_id"]["month"],
             day=item["_id"]["day"],
-            hour=item["_id"]["hour"]
+            hour=item["_id"]["hour"],
+            tzinfo=timezone.utc  # Указываем, что время в UTC
         ).isoformat() + "Z"  # Преобразуем в ISO 8601
 
         # Добавляем данные в соответствующие массивы
