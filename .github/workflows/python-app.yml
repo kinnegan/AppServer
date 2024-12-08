@@ -2,8 +2,8 @@ name: continuous_integration
 
 on: 
   push:
-#      paths:
-#        - 'src/**'
+      paths:
+        - 'src/**'
 
 jobs:
   build:

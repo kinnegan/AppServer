@@ -24,6 +24,7 @@ SERVER_PORT=set_server_port
 ```
 Default value fro SERVER is **localhost:8000**
 Default value for MONGO is **mongodb://localhost:27017/**, **co2** for database, **DeviceInfo** and **Measurements** collections
+
 3. Run Docker compose from root directory: **`docker compose up --build`**
 
 Alternatively, run the application directly without Docker:
