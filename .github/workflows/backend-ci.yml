@@ -24,9 +24,9 @@ jobs:
         uses: actions/cache@v3
         with:
           path: "${{ github.workspace }}/backend/venv"
-          key: Linux-venv-
+          key: ${{ runner.os }}-venv-${{ hashFiles('backend/requirements.txt') }}
           restore-keys: |
-            Linux-venv-
+            ${{ runner.os }}-venv-${{ hashFiles('backend/requirements.txt') }}
 
       - name: Create virtual environment if not cached
         run: |
@@ -35,18 +35,13 @@ jobs:
             python -m pip install --upgrade pip
             pip install -r requirements.txt
             pip install -e .
-      - name: Print cache key
-        run: |
-            echo "Cache key: ${{ runner.os }}-venv-${{ hashFiles('requirements.txt') }}"
-            echo "Cache key: ${{ runner.os }}-venv-${{ hashFiles('backend/requirements.txt') }}"
 
       - name: Save venv to cache
         if: always()
         uses: actions/cache@v3
         with:
           path: "${{ github.workspace }}/backend/venv"
-          key: Linux-venv-
-
+          key: ${{ runner.os }}-venv-${{ hashFiles('backend/requirements.txt') }}
    
   build:
 
