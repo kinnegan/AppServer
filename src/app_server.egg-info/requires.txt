@@ -1,6 +1,0 @@
-setuptools>=66.1.1
-flask>=2.2
-connexion>=3.0
-gunicorn>=23.0
-uvicorn>=0.32
-python-dotenv>=1.0.0

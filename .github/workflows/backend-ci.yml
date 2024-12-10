@@ -3,7 +3,7 @@ name: continuous_integration
 on: 
   push:
       paths:
-        - 'src/**'
+        - 'backend/src/**'
 
 jobs:
   build:
