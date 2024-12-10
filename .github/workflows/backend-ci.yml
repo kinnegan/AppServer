@@ -19,8 +19,6 @@ jobs:
         with:
           cache: 'pip'
           python-version: "3.11"
-      - name: check path
-        run: pwd
 
       - name: Restore venv from cache
         uses: actions/cache@v3
@@ -37,7 +35,19 @@ jobs:
             python -m pip install --upgrade pip
             pip install -r requirements.txt
             pip install -e .
-
+      - name: check path
+        run: |
+          pwd
+          ls -la
+          ls -la /venv
+      - name: Verify venv path
+        run: |
+            if [ -d "${{ github.workspace }}/venv" ]; then
+              echo "venv exists"
+            else
+              echo "venv does not exist"
+              exit 1
+            fi
       - name: Debug venv
         run: |
             echo "Contents of venv:"
@@ -48,14 +58,7 @@ jobs:
         run: |
             ls -ld ${{ github.workspace }}/venv
             ls -la ${{ github.workspace }}/venv
-      - name: Verify venv path
-        run: |
-            if [ -d "${{ github.workspace }}/venv" ]; then
-              echo "venv exists"
-            else
-              echo "venv does not exist"
-              exit 1
-            fi
+
       - name: Debug cache inputs
         run: |
           echo "Path: venv"
