@@ -20,14 +20,20 @@ jobs:
           python-version: "3.10"
       - name: Install dependencies
         run: |
+          ls -la
           python -m pip install --upgrade pip
           pip install flake8 pytest
+          pip install bandit semgrep
           pip install -r requirements.txt
           pip install -e .
       - name: Lint with flake8
         run: |
           flake8 . --show-source --statistics
         continue-on-error: true
+      - name: run SAST
+        run: |
+          bandit -r src/modules/
+        continue-on-error: true
       - name: Test with pytest
         run: |
-          pytest
+          pytest --disable-warnings
