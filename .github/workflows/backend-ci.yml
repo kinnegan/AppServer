@@ -39,6 +39,7 @@ jobs:
           fi
 
       - name: Save venv to cache
+        if: always()
         uses: actions/cache@v3
         with:
           path: venv
@@ -59,7 +60,12 @@ jobs:
 
       - name: Run linter
         run: |
-          source venv/bin/activate
+          if [ -d "venv" ]; then
+            source venv/bin/activate
+          else
+            echo "Error: venv not found"
+            exit 1
+          fi
           pip install flake8
           flake8 . || echo "Linting issues found, continuing..."
 
@@ -78,7 +84,12 @@ jobs:
 
       - name: Run SAST
         run: |
-          source venv/bin/activate
+          if [ -d "venv" ]; then
+            source venv/bin/activate
+          else
+            echo "Error: venv not found"
+            exit 1
+          fi
           pip install bandit
           bandit -r . || echo "SAST issues found, continuing..."
 
@@ -97,7 +108,12 @@ jobs:
 
       - name: Run tests
         run: |
-          source venv/bin/activate
+          if [ -d "venv" ]; then
+            source venv/bin/activate
+          else
+            echo "Error: venv not found"
+            exit 1
+          fi
           pytest
 
   build:
@@ -115,5 +131,10 @@ jobs:
 
       - name: Build project
         run: |
-          source venv/bin/activate
+          if [ -d "venv" ]; then
+            source venv/bin/activate
+          else
+            echo "Error: venv not found"
+            exit 1
+          fi
           python setup.py build
