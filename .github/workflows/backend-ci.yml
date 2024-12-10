@@ -3,7 +3,7 @@ name: continuous_integration
 on: 
   push:
       paths:
-        - 'backend/src/**'
+        - 'backend/**'
 
 jobs:
   build:
@@ -30,6 +30,9 @@ jobs:
           python -m venv venv
           source venv/bin/activate
           pip install --upgrade pip 
+
+      - name: print dir
+        run: ls -la
 
       - name: Install Dependencies
         run: |
