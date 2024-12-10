@@ -24,13 +24,12 @@ jobs:
         uses: actions/cache@v3
         with:
           path: venv
-          key: ${{ runner.os }}-venv-${{ hashFiles('requirements.txt') }}
+          key: TEST
           restore-keys: |
-            ${{ runner.os }}-venv-
+            TEST
 
       - name: Create virtual environment if not cached
         run: |
-          ls -la
           if [ ! -d "venv" ]; then
             python -m venv venv
             source venv/bin/activate
@@ -38,14 +37,16 @@ jobs:
             pip install -r requirements.txt
             pip install -e .
           fi
-          ls -la
-      
+
+      - name: Check if venv exists
+        run: ls -la
+           
       - name: Save venv to cache
         if: always()
         uses: actions/cache@v3
         with:
           path: venv
-          key: ${{ runner.os }}-venv-${{ hashFiles('requirements.txt') }}
+          key: TEST
    
   build:
 
