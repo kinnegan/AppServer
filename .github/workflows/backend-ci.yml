@@ -9,6 +9,27 @@ defaults:
     working-directory: backend
 
 jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          cache: 'pip'
+          python-version: "3.11"
+      - name: Create Virtual Environment
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install --upgrade pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -e .    
   build:
 
     runs-on: ubuntu-latest
@@ -30,7 +51,6 @@ jobs:
         run: ls -la
       - name: Install dependencies
         run: |
-          ls -la
           python -m pip install --upgrade pip
           pip install flake8 pytest
           pip install bandit semgrep
