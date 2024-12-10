@@ -39,7 +39,6 @@ jobs:
           fi
 
       - name: Save venv to cache
-        if: always()
         uses: actions/cache@v3
         with:
           path: venv
@@ -52,14 +51,16 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Use cached venv and install linters
-        run: |
-          source venv/bin/activate
-          pip install flake8
+      - name: Restore venv from cache
+        uses: actions/cache@v3
+        with:
+          path: venv
+          key: ${{ runner.os }}-venv-${{ hashFiles('requirements.txt') }}
 
       - name: Run linter
         run: |
           source venv/bin/activate
+          pip install flake8
           flake8 . || echo "Linting issues found, continuing..."
 
   sast:
@@ -69,14 +70,16 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Use cached venv and install SAST tools
-        run: |
-          source venv/bin/activate
-          pip install bandit
+      - name: Restore venv from cache
+        uses: actions/cache@v3
+        with:
+          path: venv
+          key: ${{ runner.os }}-venv-${{ hashFiles('requirements.txt') }}
 
       - name: Run SAST
         run: |
           source venv/bin/activate
+          pip install bandit
           bandit -r . || echo "SAST issues found, continuing..."
 
   test:
@@ -86,7 +89,13 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Use cached venv and run tests
+      - name: Restore venv from cache
+        uses: actions/cache@v3
+        with:
+          path: venv
+          key: ${{ runner.os }}-venv-${{ hashFiles('requirements.txt') }}
+
+      - name: Run tests
         run: |
           source venv/bin/activate
           pytest
@@ -98,7 +107,13 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Use cached venv and build project
+      - name: Restore venv from cache
+        uses: actions/cache@v3
+        with:
+          path: venv
+          key: ${{ runner.os }}-venv-${{ hashFiles('requirements.txt') }}
+
+      - name: Build project
         run: |
           source venv/bin/activate
           python setup.py build
