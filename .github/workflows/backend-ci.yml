@@ -1,4 +1,3 @@
-
 name: Continuous Integration
 
 on:
@@ -21,13 +20,30 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
-          cache: 'pip'
 
-      - name: Create virtual environment
+      - name: Restore venv from cache
+        uses: actions/cache@v3
+        with:
+          path: venv
+          key: ${{ runner.os }}-venv-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-venv-
+
+      - name: Create virtual environment if not cached
         run: |
-          python -m venv venv
-          source venv/bin/activate
-          pip install --upgrade pip
+          if [ ! -d "venv" ]; then
+            python -m venv venv
+            source venv/bin/activate
+            pip install --upgrade pip
+            pip install -r requirements.txt
+          fi
+
+      - name: Save venv to cache
+        if: always()
+        uses: actions/cache@v3
+        with:
+          path: venv
+          key: ${{ runner.os }}-venv-${{ hashFiles('requirements.txt') }}
 
   lint:
     runs-on: ubuntu-latest
@@ -36,7 +52,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Activate virtual environment and install linters
+      - name: Use cached venv and install linters
         run: |
           source venv/bin/activate
           pip install flake8
@@ -53,7 +69,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Activate virtual environment and install SAST tools
+      - name: Use cached venv and install SAST tools
         run: |
           source venv/bin/activate
           pip install bandit
@@ -70,12 +86,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Activate virtual environment and install dependencies
-        run: |
-          source venv/bin/activate
-          pip install -r requirements.txt
-
-      - name: Run tests
+      - name: Use cached venv and run tests
         run: |
           source venv/bin/activate
           pytest
@@ -87,7 +98,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Activate virtual environment and build project
+      - name: Use cached venv and build project
         run: |
           source venv/bin/activate
           python setup.py build
