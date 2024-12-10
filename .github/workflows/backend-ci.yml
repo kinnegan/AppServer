@@ -23,7 +23,7 @@ jobs:
       - name: Restore venv from cache
         uses: actions/cache@v3
         with:
-          path: venv
+          path: ${{ github.workspace }}/venv
           key: TEST
           restore-keys: |
             TEST
@@ -39,19 +39,31 @@ jobs:
       - name: Debug venv
         run: |
             echo "Contents of venv:"
-            ls -la venv
+            ls -la ${{ github.workspace }}/venv
             echo "Contents of venv/bin:"
-            ls -la venv/bin
+            ls -la ${{ github.workspace }}/venv/bin
       - name: Check venv permissions
         run: |
-            ls -ld venv
-            ls -la venv
-
+            ls -ld ${{ github.workspace }}/venv
+            ls -la ${{ github.workspace }}/venv
+      - name: Verify venv path
+        run: |
+            if [ -d "${{ github.workspace }}/venv" ]; then
+              echo "venv exists"
+            else
+              echo "venv does not exist"
+              exit 1
+            fi
+      - name: Debug cache inputs
+        run: |
+          echo "Path: venv"
+          echo "Key: TEST"
+          ls -la ${{ github.workspace }}/venv
       - name: Save venv to cache
         if: always()
         uses: actions/cache@v3
         with:
-          path: venv
+          path: ${{ github.workspace }}/venv
           key: TEST
    
   build:
