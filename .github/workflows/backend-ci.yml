@@ -23,7 +23,7 @@ jobs:
       - name: Restore venv from cache
         uses: actions/cache@v3
         with:
-          path: ${{ github.workspace }}/venv
+          path: "${{ github.workspace }}/backend/venv"
           key: TEST
           restore-keys: |
             TEST
@@ -35,21 +35,11 @@ jobs:
             python -m pip install --upgrade pip
             pip install -r requirements.txt
             pip install -e .
-            pwd
-            ls -la
-            ls -la venv
-            ls -la ${{ github.workspace }}/venv
-        continue-on-error: true
-      - name: check path
-        run: |
-          pwd
-          ls -la
-          ls -la /venv
-          ls -la ${{ github.workspace }}/venv
-        continue-on-error: true
+
+
       - name: Verify venv path
         run: |
-            if [ -d "${{ github.workspace }}/venv" ]; then
+            if [ -d "${{ github.workspace }}/backend/venv" ]; then
               echo "venv exists"
             else
               echo "venv does not exist"
@@ -59,28 +49,28 @@ jobs:
       - name: Debug venv
         run: |
             echo "Contents of venv:"
-            ls -la ${{ github.workspace }}/venv
+            ls -la "${{ github.workspace }}/backend/venv"
             echo "Contents of venv/bin:"
-            ls -la ${{ github.workspace }}/venv/bin
+            ls -la "${{ github.workspace }}/backend/venv"/bin
         continue-on-error: true
       - name: Check venv permissions
         run: |
-            ls -ld ${{ github.workspace }}/venv
-            ls -la ${{ github.workspace }}/venv
+            ls -ld "${{ github.workspace }}/backend/venv"
+            ls -la "${{ github.workspace }}/backend/venv"
         continue-on-error: true
 
       - name: Debug cache inputs
         run: |
           echo "Path: venv"
           echo "Key: TEST"
-          ls -la ${{ github.workspace }}/venv
+          ls -la "${{ github.workspace }}/backend/venv"
         continue-on-error: true
 
       - name: Save venv to cache
         if: always()
         uses: actions/cache@v3
         with:
-          path: ${{ github.workspace }}/venv
+          path: "${{ github.workspace }}/backend/venv"
           key: TEST
         continue-on-error: true
    
