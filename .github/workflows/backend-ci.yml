@@ -35,35 +35,10 @@ jobs:
             python -m pip install --upgrade pip
             pip install -r requirements.txt
             pip install -e .
-
-      - name: Verify venv path
+      - name: Print cache key
         run: |
-            if [ -d "${{ github.workspace }}/backend/venv" ]; then
-              echo "venv exists"
-            else
-              echo "venv does not exist"
-              exit 1
-            fi
-
-      - name: Debug venv
-        run: |
-            echo "Contents of venv:"
-            ls -la "${{ github.workspace }}/backend/venv"
-            echo "Contents of venv/bin:"
-            ls -la "${{ github.workspace }}/backend/venv"/bin
-
-      - name: Check venv permissions
-        run: |
-            ls -ld "${{ github.workspace }}/backend/venv"
-            ls -la "${{ github.workspace }}/backend/venv"
-
-
-      - name: Debug cache inputs
-        run: |
-          echo "Path: venv"
-          echo "Key: TEST"
-          ls -la "${{ github.workspace }}/backend/venv"
-
+            echo "Cache key: ${{ runner.os }}-venv-${{ hashFiles('requirements.txt') }}"
+            echo "Cache key: ${{ runner.os }}-venv-${{ hashFiles('backend/requirements.txt') }}"
 
       - name: Save venv to cache
         if: always()
