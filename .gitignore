@@ -2,3 +2,5 @@
 **/.pytest_cache/
 .env
 .coverage
+**/node_modules/
+**/build/
