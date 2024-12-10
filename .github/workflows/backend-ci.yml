@@ -19,6 +19,8 @@ jobs:
         with:
           cache: 'pip'
           python-version: "3.11"
+      - name: check path
+        run: pwd
 
       - name: Restore venv from cache
         uses: actions/cache@v3
