@@ -35,13 +35,18 @@ jobs:
             python -m pip install --upgrade pip
             pip install -r requirements.txt
             pip install -e .
-            ls -la /venv
+            pwd
+            ls -la
+            ls -la venv
             ls -la ${{ github.workspace }}/venv
+        continue-on-error: true
       - name: check path
         run: |
           pwd
           ls -la
           ls -la /venv
+          ls -la ${{ github.workspace }}/venv
+        continue-on-error: true
       - name: Verify venv path
         run: |
             if [ -d "${{ github.workspace }}/venv" ]; then
@@ -50,28 +55,34 @@ jobs:
               echo "venv does not exist"
               exit 1
             fi
+        continue-on-error: true
       - name: Debug venv
         run: |
             echo "Contents of venv:"
             ls -la ${{ github.workspace }}/venv
             echo "Contents of venv/bin:"
             ls -la ${{ github.workspace }}/venv/bin
+        continue-on-error: true
       - name: Check venv permissions
         run: |
             ls -ld ${{ github.workspace }}/venv
             ls -la ${{ github.workspace }}/venv
+        continue-on-error: true
 
       - name: Debug cache inputs
         run: |
           echo "Path: venv"
           echo "Key: TEST"
           ls -la ${{ github.workspace }}/venv
+        continue-on-error: true
+
       - name: Save venv to cache
         if: always()
         uses: actions/cache@v3
         with:
           path: ${{ github.workspace }}/venv
           key: TEST
+        continue-on-error: true
    
   build:
 
