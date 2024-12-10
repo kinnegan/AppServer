@@ -35,6 +35,8 @@ jobs:
             python -m pip install --upgrade pip
             pip install -r requirements.txt
             pip install -e .
+            ls -la /venv
+            ls -la ${{ github.workspace }}/venv
       - name: check path
         run: |
           pwd
