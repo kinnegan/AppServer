@@ -24,9 +24,9 @@ jobs:
         uses: actions/cache@v3
         with:
           path: "${{ github.workspace }}/backend/venv"
-          key: ${{ runner.os }}-venv-${{ hashFiles('${{ github.workspace }}/backend/requirements.txt') }}
+          key: Linux-venv-
           restore-keys: |
-            ${{ runner.os }}-venv-${{ hashFiles('${{ github.workspace }}/backend/requirements.txt') }}
+            Linux-venv-
 
       - name: Create virtual environment if not cached
         run: |
@@ -70,7 +70,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: "${{ github.workspace }}/backend/venv"
-          key: ${{ runner.os }}-venv-${{ hashFiles('${{ github.workspace }}/backend/requirements.txt') }}
+          key: Linux-venv-
 
    
   build:
