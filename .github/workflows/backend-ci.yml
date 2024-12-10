@@ -21,9 +21,11 @@ jobs:
           python-version: "3.11"
       - name: Create Virtual Environment
         run: |
+          ls -la
           python -m venv venv
           source venv/bin/activate
           pip install --upgrade pip
+          ls -la
 
       - name: Install dependencies
         run: |
