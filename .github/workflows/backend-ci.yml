@@ -30,17 +30,23 @@ jobs:
 
       - name: Create virtual environment if not cached
         run: |
-          if [ ! -d "venv" ]; then
             python -m venv venv
             source venv/bin/activate
             python -m pip install --upgrade pip
             pip install -r requirements.txt
             pip install -e .
-          fi
 
-      - name: Check if venv exists
-        run: ls -la
-           
+      - name: Debug venv
+        run: |
+            echo "Contents of venv:"
+            ls -la venv
+            echo "Contents of venv/bin:"
+            ls -la venv/bin
+      - name: Check venv permissions
+        run: |
+            ls -ld venv
+            ls -la venv
+
       - name: Save venv to cache
         if: always()
         uses: actions/cache@v3
