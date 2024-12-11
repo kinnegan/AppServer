@@ -16,7 +16,11 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
-
+      - name: Create package-local.json
+        run: |
+          if [ ! -d ""${{ github.workspace }}/frontend/package-lock.json"" ]; then
+            npm install
+          fi
       - name: Install Dependencies
         run: npm ci
 
