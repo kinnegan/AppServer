@@ -7,6 +7,12 @@ on:
   pull_request:
     paths:
       - 'backend/**'
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to run workflow on'
+        required: true
+        default: 'main'  
 
 defaults:
   run:
