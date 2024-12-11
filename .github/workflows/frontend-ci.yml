@@ -9,6 +9,10 @@ on:
       - 'frontend/**'
   workflow_dispatch:
 
+defaults:
+  run:
+    working-directory: frontend
+
 jobs:
   cache:
     name: Generate Cache
