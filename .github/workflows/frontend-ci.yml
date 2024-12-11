@@ -1,4 +1,4 @@
-name: Frontend CI Workflow
+name: Frontend CI Pipeline
 
 on:
   push:
@@ -8,17 +8,16 @@ on:
     paths:
       - 'frontend/**'
   workflow_dispatch:
-
-defaults:
-  run:
-    working-directory: frontend
+    inputs:
+      branch:
+        description: 'Branch to run workflow on'
+        required: true
+        default: 'main'
 
 jobs:
   cache:
-    name: Generate Cache
+    name: Cache Node Modules
     runs-on: ubuntu-latest
-    outputs:
-      node_modules_cache_key: ${{ steps.cache-node-modules.outputs.cache-hit }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -35,38 +34,46 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-modules-
 
-  lint:
-    name: Lint Code
+  lint_and_test:
+    name: Run Lint and Tests
     runs-on: ubuntu-latest
     needs: cache
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Run Linting
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Lint the project
         run: npm run lint
 
-  test:
-    name: Run Tests
-    runs-on: ubuntu-latest
-    needs: lint
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
+      - name: Run tests
+        run: npm test
 
-      - name: Run Tests
-        run: npm run test
-
-  build:
-    name: Build Application
+  audit:
+    name: Run npm audit
     runs-on: ubuntu-latest
-    needs: test
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
 
       - name: Install Dependencies
-        run: npm ci
+        run: npm install
 
-      - name: Build the Application
+      - name: Run npm audit for vulnerabilities
+        run: npm audit
+
+  build:
+    name: Build Application
+    runs-on: ubuntu-latest
+    needs: lint_and_test
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build the application
         run: npm run build
