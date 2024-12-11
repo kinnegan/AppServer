@@ -24,14 +24,14 @@ jobs:
       - name: Restore venv from cache
         uses: actions/cache@v3
         with:
-          path: backend/venv
+          path: "${{ github.workspace }}/backend/venv"
           key: ${{ runner.os }}-venv-${{ hashFiles('backend/requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-venv-
 
       - name: Create virtual environment if not cached
         run: |
-          if [ ! -d "backend/venv" ]; then
+          if [ ! -d ""${{ github.workspace }}/backend/venv"" ]; then
             python -m venv venv
             source venv/bin/activate
             pip install --upgrade pip
@@ -42,7 +42,7 @@ jobs:
         if: always()
         uses: actions/cache@v3
         with:
-          path: backend/venv
+          path: "${{ github.workspace }}/backend/venv"
           key: ${{ runner.os }}-venv-${{ hashFiles('backend/requirements.txt') }}
 
   lint:
@@ -55,12 +55,12 @@ jobs:
       - name: Restore venv from cache
         uses: actions/cache@v3
         with:
-          path: backend/venv
+          path: "${{ github.workspace }}/backend/venv"
           key: ${{ runner.os }}-venv-${{ hashFiles('backend/requirements.txt') }}
 
       - name: Run linter
         run: |
-          if [ -d "backend/venv" ]; then
+          if [ -d ""${{ github.workspace }}/backend/venv"" ]; then
             source venv/bin/activate
           else
             echo "Error: venv not found"
@@ -79,12 +79,12 @@ jobs:
       - name: Restore venv from cache
         uses: actions/cache@v3
         with:
-          path: backend/venv
+          path: "${{ github.workspace }}/backend/venv"
           key: ${{ runner.os }}-venv-${{ hashFiles('backend/requirements.txt') }}
 
       - name: Run SAST
         run: |
-          if [ -d "backend/venv" ]; then
+          if [ -d ""${{ github.workspace }}/backend/venv"" ]; then
             source venv/bin/activate
           else
             echo "Error: venv not found"
@@ -103,12 +103,12 @@ jobs:
       - name: Restore venv from cache
         uses: actions/cache@v3
         with:
-          path: backend/venv
+          path: "${{ github.workspace }}/backend/venv"
           key: ${{ runner.os }}-venv-${{ hashFiles('backend/requirements.txt') }}
 
       - name: Run tests
         run: |
-          if [ -d "backend/venv" ]; then
+          if [ -d ""${{ github.workspace }}/backend/venv"" ]; then
             source venv/bin/activate
           else
             echo "Error: venv not found"
@@ -126,12 +126,12 @@ jobs:
       - name: Restore venv from cache
         uses: actions/cache@v3
         with:
-          path: backend/venv
+          path: "${{ github.workspace }}/backend/venv"
           key: ${{ runner.os }}-venv-${{ hashFiles('backend/requirements.txt') }}
 
       - name: Build project
         run: |
-          if [ -d "backend/venv" ]; then
+          if [ -d ""${{ github.workspace }}/backend/venv"" ]; then
             source venv/bin/activate
           else
             echo "Error: venv not found"
