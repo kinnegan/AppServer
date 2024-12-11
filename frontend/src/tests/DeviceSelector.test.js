@@ -17,7 +17,12 @@ test("renders device selector", () => {
     />
   );
 
+  // Проверка текста на экране
   expect(screen.getByText("Select a device:")).toBeInTheDocument();
+
+  // Эмулируем изменение выбора в селекте
   fireEvent.change(screen.getByRole("combobox"), { target: { value: "device1" } });
+
+  // Проверка, что onSelect был вызван с правильным значением
   expect(onSelect).toHaveBeenCalledWith("device1");
 });

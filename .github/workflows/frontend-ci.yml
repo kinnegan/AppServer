@@ -20,6 +20,9 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
+      - name: list
+        run: |
+          ls -la
       - name: Create package-local.json
         run: |
           if [ ! -d ""${{ github.workspace }}/frontend/package-lock.json"" ]; then
@@ -56,6 +59,25 @@ jobs:
 
       - name: Run ESLint
         run: npm run lint
+  audit:
+    name: Audit
+    runs-on: ubuntu-latest
+    needs: cache
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Restore Node Modules Cache
+        uses: actions/cache@v3
+        with:
+          path: "${{ github.workspace }}/frontend/node_modules"
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('frontend/package-lock.json') }}
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run audit for vulnerabilities
+        run: npm audit
 
   test:
     name: Run Tests
