@@ -16,7 +16,15 @@ const compat = new FlatCompat({
     allConfig: js.configs.all
 });
 
-export default [...fixupConfigRules(compat.extends(
+export default [
+    {
+        ignores: [
+            "eslint.config.mjs",
+            "build/**",
+            "node_modules/**"
+        ],
+    },
+    ...fixupConfigRules(compat.extends(
     "eslint:recommended",
     "plugin:react/recommended",
     "plugin:jest/recommended",
