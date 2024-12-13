@@ -1,0 +1,53 @@
+openapi: 3.0.0
+info:
+  title: "Test API"
+  description: "A simple test API"
+  version: "1.0.0"
+
+servers:
+  - url: "/api"
+
+paths:
+   /test:
+    post:
+      operationId: "modules.parsers.read"
+      tags:
+        - "Test"
+      summary: "Process test data"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - externalId
+                - niddConfiguration
+                - reliableDataService
+                - data
+              properties:
+                externalId:
+                  type: string
+                  example: "test@123.iot.mts.ru"
+                niddConfiguration:
+                  type: string
+                  example: "/3gpp-nidd/v1/test/configurations/123"
+                reliableDataService:
+                  type: boolean
+                  example: false
+                data:
+                  type: string
+                  example: "A4TxAgMD0i/x/e8tZ+wJywr/////KwKkGDrwLWfpCcUK"
+      responses:
+        "200":
+          description: "Data processed successfully"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Data received and processed successfully."
+        "400":
+          description: "Invalid input data"
